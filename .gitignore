@@ -1,0 +1,19 @@
+# Directories
+.vs/
+build/
+
+# Files
+*.sln
+*.user
+*.vcxproj
+*.filters
+*.cache
+Makefile
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
