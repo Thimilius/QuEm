@@ -6,6 +6,10 @@ using namespace QuEm;
 
 constexpr size_t DISTRIBUTION_SAMPLES = 1000000;
 
+void PrintMeasurement(const std::string &header, const MeasureResult &result) {
+  std::cout << header << " Measurement: " << result.state << std::endl;
+}
+
 void PrintDistribution(const std::string &header, const std::map<size_t, size_t> &distributions) {
   std::cout << header << " Distribution (" << DISTRIBUTION_SAMPLES << "):" << std::endl;
   for (auto [key, value] : distributions) {
@@ -16,15 +20,13 @@ void PrintDistribution(const std::string &header, const std::map<size_t, size_t>
 void TestRandomNumberGeneratorOneQubit() {
   Qubit qubit = Qubit(ONE_OVER_SQRT2, ONE_OVER_SQRT2);
   MeasureResult result = qubit.Measure();
-
-  std::cout << "One Qubit Measurement: " << result.qubit << std::endl;
+  PrintMeasurement("One Qubit", result);
 }
 
 void TestRandomNumberGeneratorTwoQubit() {
   Qubit qubit = Qubit({ ONE_HALF, ONE_HALF, ONE_HALF, ONE_HALF });
   MeasureResult result = qubit.Measure();
-
-  std::cout << "Two Qubit Measurement: " << result.qubit << std::endl;
+  PrintMeasurement("Two Qubit", result);
 }
 
 void TestRandomNumberGeneratorNQubit(size_t n) {
@@ -36,8 +38,7 @@ void TestRandomNumberGeneratorNQubit(size_t n) {
   
   Qubit qubit = Qubit(amplitudes);
   MeasureResult result = qubit.Measure();
-
-  std::cout << "N (" << n << ") Qubit Measurement: " << result.qubit << std::endl;
+  PrintMeasurement(std::format("N ({}) Qubit", n), result);
 }
 
 void TestRandomNumberGeneratorTwoQubitDistribution() {
@@ -45,7 +46,7 @@ void TestRandomNumberGeneratorTwoQubitDistribution() {
   for (size_t i = 0; i < DISTRIBUTION_SAMPLES; i++) {
     Qubit qubit = Qubit({ ONE_HALF, ONE_HALF, ONE_HALF, ONE_HALF });
     MeasureResult result = qubit.Measure();
-    distributions[result.qubit]++;
+    distributions[result.state]++;
   }
 
   PrintDistribution("Two Qubit", distributions);
@@ -62,10 +63,19 @@ void TestRandomNumberGeneratorNQubitDistribution(size_t n) {
   for (size_t i = 0; i < DISTRIBUTION_SAMPLES; i++) {
     Qubit qubit = Qubit(amplitudes);
     MeasureResult result = qubit.Measure();
-    distributions[result.qubit]++;
+    distributions[result.state]++;
   }
 
   PrintDistribution(std::format("N ({}) Qubit", n), distributions);
+}
+
+void TestTensor() {
+  Qubit qubit_a = Qubit(ONE_OVER_SQRT2, ONE_OVER_SQRT2);
+  Qubit qubit_b = Qubit(ONE_OVER_SQRT2, ONE_OVER_SQRT2);
+
+  Qubit combined_qubit = Qubit::Tensor(qubit_a, qubit_b);
+  MeasureResult result = combined_qubit.Measure();
+  PrintMeasurement("Tensor Qubit", result);
 }
 
 int main() {
@@ -74,6 +84,7 @@ int main() {
   TestRandomNumberGeneratorTwoQubitDistribution();
   TestRandomNumberGeneratorNQubit(8);
   TestRandomNumberGeneratorNQubitDistribution(8);
+  TestTensor();
   
   return 0;
 }

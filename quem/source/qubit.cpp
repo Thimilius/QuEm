@@ -8,7 +8,7 @@ namespace QuEm {
 
   Qubit::Qubit(Complex a, Complex b) : m_data({ a, b }) { }
 
-  Qubit::Qubit(const std::vector<Complex> &data) : m_data(data) { }
+  Qubit::Qubit(std::vector<Complex> data) : m_data(std::move(data)) { }
 
   MeasureResult Qubit::Measure() {
     MeasureResult result = { };
@@ -22,14 +22,30 @@ namespace QuEm {
       random -= std::norm(m_data[i]);
       if (random <= 0) {
         result.success = true;
-        result.qubit = i;
+        result.state = i;
         return result;
       }
     }
     
     return result;
   }
-  
+
+  Qubit Qubit::Tensor(const Qubit &a, const Qubit &b) {
+    size_t a_size = a.GetSize();
+    size_t b_size = b.GetSize();
+    
+    std::vector<Complex> data;
+    data.resize(a_size * b_size);
+    for (size_t i = 0; i < a_size; ++i) {
+      for (size_t j = 0; j < b_size; ++j) {
+        data[i * b_size + j] = a.m_data[i] * b.m_data[j];
+      }
+    }
+    
+    Qubit result(data);
+    return result;
+  }
+
   bool Qubit::IsValid() const {
     if (!IsPowerOfTwo(m_data.size())) {
       return false;

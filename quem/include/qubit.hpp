@@ -14,18 +14,20 @@ namespace QuEm {
   
   struct MeasureResult {
     bool success = false;
-    size_t qubit = 0;
+    size_t state = 0;
   };
   
   class Qubit {
   public:
     Qubit(Complex a, Complex b);
-    Qubit(const std::vector<Complex> &data);
+    Qubit(std::vector<Complex> data);
   public:
     const std::vector<Complex> &GetData() const { return m_data; }
     size_t GetSize() const { return m_data.size(); }
 
     MeasureResult Measure();
+  public:
+    static Qubit Tensor(const Qubit &a, const Qubit &b);
   private:
     bool IsValid() const;
     int Collapse(int entry);
