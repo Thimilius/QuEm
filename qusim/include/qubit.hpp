@@ -9,6 +9,7 @@ namespace QuSim {
   using Complex = std::complex<double>;
 
   constexpr double ONE_OVER_SQRT2 = 0.7071067811865475244008443621048490392848359376884740365883398689;
+  constexpr double ONE_HALF = 0.5;
   
   struct MeasureResult {
     bool success = false;

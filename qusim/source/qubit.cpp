@@ -2,6 +2,8 @@
 
 #include "qubit.hpp"
 
+#include "utils.hpp"
+
 namespace QuSim {
 
   Qubit::Qubit(Complex a, Complex b) : m_data({ a, b }) { }
@@ -29,12 +31,15 @@ namespace QuSim {
   }
   
   bool Qubit::IsValid() const {
+    if (!IsPowerOfTwo(m_data.size())) {
+      return false;
+    }
     double sum = 0;
     for (const Complex &complex : m_data) {
       sum += std::norm(complex);
     }
-    bool is_valid = std::fabs(sum - 1) < ERROR_TOLERANCE;
-    return is_valid;
+    bool is_in_tolerance = std::fabs(sum - 1) < ERROR_TOLERANCE;
+    return is_in_tolerance;
   }
   
   int Qubit::Collapse(int entry) {
