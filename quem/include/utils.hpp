@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace QuSim {
+namespace QuEm {
 
   inline bool IsPowerOfTwo(size_t x) {
     return x != 0 && (x & x - 1) == 0;

@@ -4,7 +4,7 @@
 #include <complex>
 #include <random>
 
-namespace QuSim {
+namespace QuEm {
 
   using Complex = std::complex<double>;
 

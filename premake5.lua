@@ -1,7 +1,7 @@
 output_directory_format = "%{cfg.system}-%{cfg.architecture}"
 
-workspace "qusim"
-	startproject "qusim"
+workspace "quem"
+	startproject "quem"
 
 	targetdir ("build/%{cfg.buildcfg}/bin/" .. output_directory_format)
 	objdir ("build/%{cfg.buildcfg}/obj/" .. output_directory_format)
@@ -20,8 +20,8 @@ workspace "qusim"
 		systemversion "latest"
 		linkoptions { "/IGNORE:4099" }
 
-project "qusim"
-	location "qusim"
+project "quem"
+	location "quem"
 	
 	language "C++"
 	cppdialect "C++20"

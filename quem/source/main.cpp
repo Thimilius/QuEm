@@ -1,12 +1,8 @@
 #include "qupch.hpp"
 
-#include <format>
-#include <iostream>
-#include <map>
-
 #include "qubit.hpp" 
 
-using namespace QuSim;
+using namespace QuEm;
 
 constexpr size_t DISTRIBUTION_SAMPLES = 1000000;
 

@@ -4,7 +4,7 @@
 
 #include "utils.hpp"
 
-namespace QuSim {
+namespace QuEm {
 
   Qubit::Qubit(Complex a, Complex b) : m_data({ a, b }) { }
 
