@@ -29,7 +29,7 @@ void TestRandomNumberGeneratorTwoQubit() {
 
 void TestRandomNumberGeneratorNQubit(size_t n) {
   size_t power_of_two = static_cast<size_t>(std::pow(2, n));
-  double amplitude = 1.0 / std::sqrt(static_cast<double>(power_of_two));
+  FloatType amplitude = static_cast<FloatType>(1.0) / std::sqrt(static_cast<FloatType>(power_of_two));
 
   std::vector<Complex> amplitudes;
   amplitudes.resize(power_of_two, amplitude);
@@ -55,7 +55,7 @@ void TestRandomNumberGeneratorNQubitDistribution(size_t n) {
   std::map<size_t, size_t> distributions;
 
   size_t power_of_two = static_cast<size_t>(std::pow(2, n));
-  double amplitude = 1.0 / std::sqrt(static_cast<double>(power_of_two));
+  FloatType amplitude = static_cast<FloatType>(1.0) / std::sqrt(static_cast<FloatType>(power_of_two));
   std::vector<Complex> amplitudes;
   amplitudes.resize(power_of_two, amplitude);
   

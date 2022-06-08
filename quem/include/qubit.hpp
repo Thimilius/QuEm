@@ -6,10 +6,11 @@
 
 namespace QuEm {
 
-  using Complex = std::complex<double>;
+  using FloatType = double;
+  using Complex = std::complex<FloatType>;
 
-  constexpr double ONE_OVER_SQRT2 = 0.7071067811865475244008443621048490392848359376884740365883398689;
-  constexpr double ONE_HALF = 0.5;
+  constexpr FloatType ONE_OVER_SQRT2 = static_cast<FloatType>(0.7071067811865475244008443621048490392848359376884740365883398689);
+  constexpr FloatType ONE_HALF = 0.5;
   
   struct MeasureResult {
     bool success = false;
@@ -33,9 +34,12 @@ namespace QuEm {
   private:
     inline static std::random_device s_random_device = std::random_device();
     inline static std::mt19937 s_random_engine = std::mt19937(s_random_device());
-    inline static std::uniform_real_distribution<double> s_random_distribution = std::uniform_real_distribution(0.0, 1.0);
+    inline static std::uniform_real_distribution<FloatType> s_random_distribution = std::uniform_real_distribution(
+      static_cast<FloatType>(0.0),
+      static_cast<FloatType>(1.0)
+    );
 
-    static constexpr double ERROR_TOLERANCE = 0.000000000000001;
+    static constexpr FloatType ERROR_TOLERANCE = static_cast<FloatType>(0.000000000000001);
   };
   
 }

@@ -17,7 +17,7 @@ namespace QuEm {
       return result;
     }
 
-    double random = s_random_distribution(s_random_engine);
+    FloatType random = s_random_distribution(s_random_engine);
     for (size_t i = 0; i < m_data.size(); i++) {
       random -= std::norm(m_data[i]);
       if (random <= 0) {
@@ -34,7 +34,7 @@ namespace QuEm {
     if (!IsPowerOfTwo(m_data.size())) {
       return false;
     }
-    double sum = 0;
+    FloatType sum = 0;
     for (const Complex &complex : m_data) {
       sum += std::norm(complex);
     }
