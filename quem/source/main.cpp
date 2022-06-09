@@ -1,16 +1,13 @@
 #include "qupch.hpp"
 
+#include "constants.hpp"
 #include "matrix.hpp"
 #include "qubit.hpp" 
 
 using namespace QuEm;
 
+constexpr bool TEST_DISTRIBUTION = false;
 constexpr size_t DISTRIBUTION_SAMPLES = 1000000;
-
-const Matrix HADAMARD_TRANSFORM = Matrix(2, 2, {
-  ONE_OVER_SQRT2,  ONE_OVER_SQRT2,
-  ONE_OVER_SQRT2, -ONE_OVER_SQRT2,
-});
 
 void PrintMeasurement(const std::string &header, const MeasureResult &result) {
   std::cout << header << " Measurement: " << result.state << std::endl;
@@ -21,58 +18,6 @@ void PrintDistribution(const std::string &header, const std::map<size_t, size_t>
   for (auto [key, value] : distributions) {
     std::cout << "\t" << key << ": " << value << std::endl;
   }
-}
-
-void TestRandomNumberGeneratorOneQubit() {
-  Qubit qubit = Qubit(ONE_OVER_SQRT2, ONE_OVER_SQRT2);
-  MeasureResult result = qubit.Measure();
-  PrintMeasurement("One Qubit", result);
-}
-
-void TestRandomNumberGeneratorTwoQubit() {
-  Qubit qubit = Qubit({ ONE_HALF, ONE_HALF, ONE_HALF, ONE_HALF });
-  MeasureResult result = qubit.Measure();
-  PrintMeasurement("Two Qubit", result);
-}
-
-void TestRandomNumberGeneratorNQubit(size_t n) {
-  size_t power_of_two = static_cast<size_t>(1) << n;
-  FloatType amplitude = static_cast<FloatType>(1.0) / std::sqrt(static_cast<FloatType>(power_of_two));
-
-  std::vector<Complex> amplitudes;
-  amplitudes.resize(power_of_two, amplitude);
-  
-  Qubit qubit = Qubit(amplitudes);
-  MeasureResult result = qubit.Measure();
-  PrintMeasurement(std::format("N ({}) Qubit", n), result);
-}
-
-void TestRandomNumberGeneratorTwoQubitDistribution() {
-  std::map<size_t, size_t> distributions;
-  for (size_t i = 0; i < DISTRIBUTION_SAMPLES; i++) {
-    Qubit qubit = Qubit({ ONE_HALF, ONE_HALF, ONE_HALF, ONE_HALF });
-    MeasureResult result = qubit.Measure();
-    distributions[result.state]++;
-  }
-
-  PrintDistribution("Two Qubit", distributions);
-}
-
-void TestRandomNumberGeneratorNQubitDistribution(size_t n) {
-  std::map<size_t, size_t> distributions;
-
-  size_t power_of_two = static_cast<size_t>(1) << n;
-  FloatType amplitude = static_cast<FloatType>(1.0) / std::sqrt(static_cast<FloatType>(power_of_two));
-  std::vector<Complex> amplitudes;
-  amplitudes.resize(power_of_two, amplitude);
-  
-  for (size_t i = 0; i < DISTRIBUTION_SAMPLES; i++) {
-    Qubit qubit = Qubit(amplitudes);
-    MeasureResult result = qubit.Measure();
-    distributions[result.state]++;
-  }
-
-  PrintDistribution(std::format("N ({}) Qubit", n), distributions);
 }
 
 void TestQubitTensor() {
@@ -107,15 +52,104 @@ void TestMatrixTensor() {
   tensor_matrix.Print();
 }
 
+void RandomNumberGeneratorOneQubit() {
+  Qubit x = Qubit(1, 0);
+  x = HADAMARD_TRANSFORM * x;
+  MeasureResult result = x.Measure();
+  
+  PrintMeasurement("Random number generator (one qubit)", result);
+}
+
+void RandomNumberGeneratorOneQubitDistribution() {
+  std::map<size_t, size_t> distributions;
+  for (size_t i = 0; i < DISTRIBUTION_SAMPLES; ++i) {
+    Qubit x = Qubit(1, 0);
+    x = HADAMARD_TRANSFORM * x;
+    MeasureResult result = x.Measure();
+    distributions[result.state]++;
+  }
+
+  PrintDistribution("One Qubit", distributions);
+}
+
+void RandomNumberGeneratorTwoQubit() {
+  Qubit x = Qubit({ 1, 0, 0, 0 });
+
+  Matrix hadamard_transform = Matrix::Tensor(HADAMARD_TRANSFORM, HADAMARD_TRANSFORM);
+  x = hadamard_transform * x;
+  MeasureResult result = x.Measure();
+  
+  PrintMeasurement("Random number generator (two qubits)", result);
+}
+
+void RandomNumberGeneratorTwoQubitDistribution() {
+  Matrix hadamard_transform = Matrix::Tensor(HADAMARD_TRANSFORM, HADAMARD_TRANSFORM);
+  
+  std::map<size_t, size_t> distributions;
+  for (size_t i = 0; i < DISTRIBUTION_SAMPLES; ++i) {
+    Qubit x = Qubit({ 1, 0, 0, 0 });
+    x = hadamard_transform * x;
+    MeasureResult result = x.Measure();
+    distributions[result.state]++;
+  }
+
+  PrintDistribution("Two Qubit", distributions);
+}
+
+void RandomNumberGeneratorNQubit(size_t n) {
+  size_t power_of_two = static_cast<size_t>(1) << n;
+  std::vector<Complex> amplitudes;
+  amplitudes.resize(power_of_two, 0);
+  amplitudes[0] = 1;
+  Qubit x = Qubit(amplitudes);
+
+  Matrix hadamard_transform = HADAMARD_TRANSFORM;
+  for (size_t i = 1; i < n; i++) {
+    hadamard_transform = Matrix::Tensor(hadamard_transform, HADAMARD_TRANSFORM); 
+  }
+  
+  x = hadamard_transform * x;
+  MeasureResult result = x.Measure();
+  
+  PrintMeasurement("Random number generator (n qubits)", result);
+}
+
+void RandomNumberGeneratorNQubitDistribution(size_t n) {
+  size_t power_of_two = static_cast<size_t>(1) << n;
+  std::vector<Complex> amplitudes;
+  amplitudes.resize(power_of_two, 0);
+  amplitudes[0] = 1;
+
+  Matrix hadamard_transform = HADAMARD_TRANSFORM;
+  for (size_t i = 1; i < n; i++) {
+    hadamard_transform = Matrix::Tensor(hadamard_transform, HADAMARD_TRANSFORM); 
+  }
+
+  std::map<size_t, size_t> distributions;
+  for (size_t i = 0; i < DISTRIBUTION_SAMPLES; ++i) {
+    Qubit x = Qubit(amplitudes);
+    x = hadamard_transform * x;
+    MeasureResult result = x.Measure();
+    distributions[result.state]++;
+  }
+  
+  PrintDistribution("N Qubit", distributions);
+}
+
 int main() {
-  TestRandomNumberGeneratorOneQubit();
-  TestRandomNumberGeneratorTwoQubit();
-  TestRandomNumberGeneratorTwoQubitDistribution();
-  TestRandomNumberGeneratorNQubit(8);
-  TestRandomNumberGeneratorNQubitDistribution(8);
   TestQubitTensor();
   TestQubitMatrixTransformation();
   TestMatrixTensor();
+
+  RandomNumberGeneratorOneQubit();
+  RandomNumberGeneratorTwoQubit();
+  RandomNumberGeneratorNQubit(8);
+
+  if constexpr (TEST_DISTRIBUTION) {
+    RandomNumberGeneratorOneQubitDistribution();
+    RandomNumberGeneratorTwoQubitDistribution();
+    RandomNumberGeneratorNQubitDistribution(4);  
+  }
   
   return 0;
 }

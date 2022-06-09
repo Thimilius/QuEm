@@ -41,6 +41,9 @@ namespace QuEm {
       if (this == &other) {
         return *this;
       }
+
+      m_rows = other.m_rows;
+      m_columns = other.m_columns;
       
       delete[] m_elements;
       m_elements = new T[m_rows * m_columns];
