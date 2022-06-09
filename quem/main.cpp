@@ -54,7 +54,7 @@ void TestMatrixTensor() {
 
 void RandomNumberGeneratorOneQubit() {
   Qubit x = Qubit(1, 0);
-  x = HADAMARD_TRANSFORM * x;
+  x = HADAMARD_GATE * x;
   MeasureResult result = x.Measure();
   
   PrintMeasurement("Random number generator (one qubit)", result);
@@ -64,7 +64,7 @@ void RandomNumberGeneratorOneQubitDistribution() {
   std::map<size_t, size_t> distributions;
   for (size_t i = 0; i < DISTRIBUTION_SAMPLES; ++i) {
     Qubit x = Qubit(1, 0);
-    x = HADAMARD_TRANSFORM * x;
+    x = HADAMARD_GATE * x;
     MeasureResult result = x.Measure();
     distributions[result.state]++;
   }
@@ -75,7 +75,7 @@ void RandomNumberGeneratorOneQubitDistribution() {
 void RandomNumberGeneratorTwoQubit() {
   Qubit x = Qubit({ 1, 0, 0, 0 });
 
-  Matrix hadamard_transform = Matrix::Tensor(HADAMARD_TRANSFORM, HADAMARD_TRANSFORM);
+  Matrix hadamard_transform = Matrix::Tensor(HADAMARD_GATE, HADAMARD_GATE);
   x = hadamard_transform * x;
   MeasureResult result = x.Measure();
   
@@ -83,7 +83,7 @@ void RandomNumberGeneratorTwoQubit() {
 }
 
 void RandomNumberGeneratorTwoQubitDistribution() {
-  Matrix hadamard_transform = Matrix::Tensor(HADAMARD_TRANSFORM, HADAMARD_TRANSFORM);
+  Matrix hadamard_transform = Matrix::Tensor(HADAMARD_GATE, HADAMARD_GATE);
   
   std::map<size_t, size_t> distributions;
   for (size_t i = 0; i < DISTRIBUTION_SAMPLES; ++i) {
@@ -103,9 +103,9 @@ void RandomNumberGeneratorNQubit(size_t n) {
   amplitudes[0] = 1;
   Qubit x = Qubit(amplitudes);
 
-  Matrix hadamard_transform = HADAMARD_TRANSFORM;
+  Matrix hadamard_transform = HADAMARD_GATE;
   for (size_t i = 1; i < n; i++) {
-    hadamard_transform = Matrix::Tensor(hadamard_transform, HADAMARD_TRANSFORM); 
+    hadamard_transform = Matrix::Tensor(hadamard_transform, HADAMARD_GATE); 
   }
   
   x = hadamard_transform * x;
@@ -120,9 +120,9 @@ void RandomNumberGeneratorNQubitDistribution(size_t n) {
   amplitudes.resize(power_of_two, 0);
   amplitudes[0] = 1;
 
-  Matrix hadamard_transform = HADAMARD_TRANSFORM;
+  Matrix hadamard_transform = HADAMARD_GATE;
   for (size_t i = 1; i < n; i++) {
-    hadamard_transform = Matrix::Tensor(hadamard_transform, HADAMARD_TRANSFORM); 
+    hadamard_transform = Matrix::Tensor(hadamard_transform, HADAMARD_GATE); 
   }
 
   std::map<size_t, size_t> distributions;
@@ -136,7 +136,21 @@ void RandomNumberGeneratorNQubitDistribution(size_t n) {
   PrintDistribution("N Qubit", distributions);
 }
 
-int main() {
+void DeutschAlgorithm(const Matrix &uf) {
+  Qubit x = Qubit(1, 0);
+  Qubit y = Qubit(0, 1);
+  Qubit q = Qubit::Tensor(x, y);
+
+  q = HADAMARD_GATE_POW_2 * q;
+
+  q = uf * q;
+  q = HADAMARD_GATE_POW_2 * q;
+
+  MeasureResult result = q.Measure();
+  PrintMeasurement("Deutsch", result);
+}
+
+int main(int argc, char **argv) {
   TestQubitTensor();
   TestQubitMatrixTransformation();
   TestMatrixTensor();
@@ -150,6 +164,8 @@ int main() {
     RandomNumberGeneratorTwoQubitDistribution();
     RandomNumberGeneratorNQubitDistribution(4);  
   }
+
+  DeutschAlgorithm(UF_GATE_1);
   
   return 0;
 }
