@@ -82,7 +82,7 @@ namespace QuEm {
       return Qubit(new_data);
     }
 
-    void Print() {
+    void Print() const {
       for (size_t i = 0; i < m_rows; i++) {
         for (size_t j = 0; j < m_columns; j++) {
           std::cout << (*this)(i, j) << " "; 

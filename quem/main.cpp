@@ -1,3 +1,4 @@
+#include <format>
 #include <map>
 
 #include "constants.hpp"
@@ -6,7 +7,6 @@
 
 using namespace QuEm;
 
-constexpr bool TEST_DISTRIBUTION = false;
 constexpr size_t DISTRIBUTION_SAMPLES = 1000000;
 
 void PrintMeasurement(const std::string &header, const MeasureResult &result) {
@@ -18,38 +18,6 @@ void PrintDistribution(const std::string &header, const std::map<size_t, size_t>
   for (auto [key, value] : distributions) {
     std::cout << "\t" << key << ": " << value << std::endl;
   }
-}
-
-void TestQubitTensor() {
-  Qubit qubit_a = Qubit(ONE_OVER_SQRT2, ONE_OVER_SQRT2);
-  Qubit qubit_b = Qubit(ONE_OVER_SQRT2, ONE_OVER_SQRT2);
-
-  Qubit combined_qubit = Qubit::Tensor(qubit_a, qubit_b);
-  MeasureResult result = combined_qubit.Measure();
-  PrintMeasurement("Tensor Qubit", result);
-}
-
-void TestQubitMatrixTransformation() {
-  Matrix transformation = Matrix(2, 2, {
-    0, 1,
-    1, 0,
-  });
-
-  Qubit qubit = Qubit(1, 0);
-  Qubit transformed_qubit = transformation * qubit;
-  MeasureResult result = transformed_qubit.Measure();
-
-  assert(result.state == 1);
-}
-
-void TestMatrixTensor() {
-  Matrix matrix = Matrix(2, 2, {
-    1, 0,
-    0, 1,
-  });
-
-  Matrix tensor_matrix = Matrix::Tensor(matrix, matrix);
-  tensor_matrix.Print();
 }
 
 void RandomNumberGeneratorOneQubit() {
@@ -93,7 +61,7 @@ void RandomNumberGeneratorTwoQubitDistribution() {
     distributions[result.state]++;
   }
 
-  PrintDistribution("Two Qubit", distributions);
+  PrintDistribution("Two Qubits", distributions);
 }
 
 void RandomNumberGeneratorNQubit(size_t n) {
@@ -111,7 +79,7 @@ void RandomNumberGeneratorNQubit(size_t n) {
   x = hadamard_transform * x;
   MeasureResult result = x.Measure();
   
-  PrintMeasurement("Random number generator (n qubits)", result);
+  PrintMeasurement(std::format("Random number generator ({} qubits)", n), result);
 }
 
 void RandomNumberGeneratorNQubitDistribution(size_t n) {
@@ -133,7 +101,7 @@ void RandomNumberGeneratorNQubitDistribution(size_t n) {
     distributions[result.state]++;
   }
   
-  PrintDistribution("N Qubit", distributions);
+  PrintDistribution(std::format("{} Qubits", n), distributions);
 }
 
 void DeutschAlgorithm(const Matrix &uf) {
@@ -147,25 +115,66 @@ void DeutschAlgorithm(const Matrix &uf) {
   q = HADAMARD_GATE_POW_2 * q;
 
   MeasureResult result = q.Measure();
-  PrintMeasurement("Deutsch", result);
+
+  if (result.state == 1) {
+    std::cout << "The function is constant!" << std::endl;
+  } else if (result.state == 3) {
+    std::cout << "The function is balanced!" << std::endl;
+  } else {
+    std::cout << "Something went horribly  wrong!" << std::endl;
+  }
+}
+
+void PrintHelp() {
+  std::cout << "Commands:" << std::endl;
+  std::cout << "  random (optional: number of qubits)" << std::endl;
+  std::cout << "  distribution (optional: number of qubits)" << std::endl;
+  std::cout << "  deutsch (function 1-4)" << std::endl;
 }
 
 int main(int argc, char **argv) {
-  TestQubitTensor();
-  TestQubitMatrixTransformation();
-  TestMatrixTensor();
+  if (argc > 1) {
+    if (std::strcmp(argv[1], "random") == 0) {
+      if (argc > 2) {
+        size_t n = std::strtoull(argv[2], nullptr, 10);
+        if (n != 0) {
+          RandomNumberGeneratorNQubit(n);
+        }
+      } else {
+        RandomNumberGeneratorOneQubit();
+        RandomNumberGeneratorTwoQubit();
+        RandomNumberGeneratorNQubit(8);  
+      }
+    } else if (std::strcmp(argv[1], "distribution") == 0) {
+      if (argc > 2) {
+        size_t n = std::strtoull(argv[2], nullptr, 10);
+        if (n != 0) {
+          RandomNumberGeneratorNQubitDistribution(n);
+        }
+      } else {
+        RandomNumberGeneratorOneQubitDistribution();
+        RandomNumberGeneratorTwoQubitDistribution();
+        RandomNumberGeneratorNQubitDistribution(4);
+      }
+    } else if (std::strcmp(argv[1], "deutsch") == 0 && argc > 2) {
+      size_t f = std::strtoull(argv[2], nullptr, 10);
 
-  RandomNumberGeneratorOneQubit();
-  RandomNumberGeneratorTwoQubit();
-  RandomNumberGeneratorNQubit(8);
-
-  if constexpr (TEST_DISTRIBUTION) {
-    RandomNumberGeneratorOneQubitDistribution();
-    RandomNumberGeneratorTwoQubitDistribution();
-    RandomNumberGeneratorNQubitDistribution(4);  
+      Matrix function = UF_GATE_1;
+      switch (f) {
+        case 1: function = UF_GATE_1; break;
+        case 2: function = UF_GATE_2; break;
+        case 3: function = UF_GATE_3; break;
+        case 4: function = UF_GATE_4; break;
+        default: return 0;
+      }
+      
+      DeutschAlgorithm(function);
+    } else {
+      PrintHelp();
+    }
+  } else {
+    PrintHelp();
   }
-
-  DeutschAlgorithm(UF_GATE_1);
   
   return 0;
 }
