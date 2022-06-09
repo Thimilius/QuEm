@@ -1,6 +1,4 @@
-﻿#include "qupch.hpp"
-
-#include "qubit.hpp"
+﻿#include "qubit.hpp"
 
 #include "utils.hpp"
 

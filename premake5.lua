@@ -33,9 +33,5 @@ project "quem"
 	rtti "Off"
 	flags { "FatalCompileWarnings" }
 	
-	pchheader "qupch.hpp"
-	pchsource "%{prj.location}/source/qupch.cpp"
-	
 	files { "%{prj.location}/**.hpp", "%{prj.location}/**.cpp" }
-	includedirs { "%{prj.location}/include" }
 	
