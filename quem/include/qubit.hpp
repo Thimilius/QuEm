@@ -1,13 +1,11 @@
 ﻿#pragma once
 
 #include <vector>
-#include <complex>
 #include <random>
 
-namespace QuEm {
+#include "types.hpp"
 
-  using FloatType = double;
-  using Complex = std::complex<FloatType>;
+namespace QuEm {
 
   constexpr FloatType ONE_OVER_SQRT2 = static_cast<FloatType>(0.7071067811865475244008443621048490392848359376884740365883398689);
   constexpr FloatType ONE_HALF = 0.5;
@@ -23,6 +21,8 @@ namespace QuEm {
     Qubit(std::vector<Complex> data);
   public:
     const std::vector<Complex> &GetData() const { return m_data; }
+    std::vector<Complex> &GetData() { return m_data; }
+    void SetData(std::vector<Complex> &&data) { m_data = data; }
     size_t GetSize() const { return m_data.size(); }
 
     MeasureResult Measure();

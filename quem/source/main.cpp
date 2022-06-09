@@ -1,10 +1,16 @@
 #include "qupch.hpp"
 
+#include "matrix.hpp"
 #include "qubit.hpp" 
 
 using namespace QuEm;
 
 constexpr size_t DISTRIBUTION_SAMPLES = 1000000;
+
+const Matrix HADAMARD_TRANSFORM = Matrix(2, 2, {
+  ONE_OVER_SQRT2,  ONE_OVER_SQRT2,
+  ONE_OVER_SQRT2, -ONE_OVER_SQRT2,
+});
 
 void PrintMeasurement(const std::string &header, const MeasureResult &result) {
   std::cout << header << " Measurement: " << result.state << std::endl;
@@ -30,7 +36,7 @@ void TestRandomNumberGeneratorTwoQubit() {
 }
 
 void TestRandomNumberGeneratorNQubit(size_t n) {
-  size_t power_of_two = static_cast<size_t>(std::pow(2, n));
+  size_t power_of_two = static_cast<size_t>(1) << n;
   FloatType amplitude = static_cast<FloatType>(1.0) / std::sqrt(static_cast<FloatType>(power_of_two));
 
   std::vector<Complex> amplitudes;
@@ -55,7 +61,7 @@ void TestRandomNumberGeneratorTwoQubitDistribution() {
 void TestRandomNumberGeneratorNQubitDistribution(size_t n) {
   std::map<size_t, size_t> distributions;
 
-  size_t power_of_two = static_cast<size_t>(std::pow(2, n));
+  size_t power_of_two = static_cast<size_t>(1) << n;
   FloatType amplitude = static_cast<FloatType>(1.0) / std::sqrt(static_cast<FloatType>(power_of_two));
   std::vector<Complex> amplitudes;
   amplitudes.resize(power_of_two, amplitude);
@@ -69,7 +75,7 @@ void TestRandomNumberGeneratorNQubitDistribution(size_t n) {
   PrintDistribution(std::format("N ({}) Qubit", n), distributions);
 }
 
-void TestTensor() {
+void TestQubitTensor() {
   Qubit qubit_a = Qubit(ONE_OVER_SQRT2, ONE_OVER_SQRT2);
   Qubit qubit_b = Qubit(ONE_OVER_SQRT2, ONE_OVER_SQRT2);
 
@@ -78,13 +84,38 @@ void TestTensor() {
   PrintMeasurement("Tensor Qubit", result);
 }
 
+void TestQubitMatrixTransformation() {
+  Matrix transformation = Matrix(2, 2, {
+    0, 1,
+    1, 0,
+  });
+
+  Qubit qubit = Qubit(1, 0);
+  Qubit transformed_qubit = transformation * qubit;
+  MeasureResult result = transformed_qubit.Measure();
+
+  assert(result.state == 1);
+}
+
+void TestMatrixTensor() {
+  Matrix matrix = Matrix(2, 2, {
+    1, 0,
+    0, 1,
+  });
+
+  Matrix tensor_matrix = Matrix::Tensor(matrix, matrix);
+  tensor_matrix.Print();
+}
+
 int main() {
   TestRandomNumberGeneratorOneQubit();
   TestRandomNumberGeneratorTwoQubit();
   TestRandomNumberGeneratorTwoQubitDistribution();
   TestRandomNumberGeneratorNQubit(8);
   TestRandomNumberGeneratorNQubitDistribution(8);
-  TestTensor();
+  TestQubitTensor();
+  TestQubitMatrixTransformation();
+  TestMatrixTensor();
   
   return 0;
 }
