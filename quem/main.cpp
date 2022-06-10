@@ -110,18 +110,17 @@ void DeutschAlgorithm(const Matrix &uf) {
   Qubit q = Qubit::Tensor(x, y);
 
   q = HADAMARD_GATE_POW_2 * q;
-
   q = uf * q;
   q = HADAMARD_GATE_POW_2 * q;
 
-  MeasureResult result = q.Measure();
+  MeasureResult result = q.Measure(1);
 
-  if (result.state == 1) {
+  if (result.state == 0) {
     std::cout << "The function is constant!" << std::endl;
-  } else if (result.state == 3) {
+  } else if (result.state == 1) {
     std::cout << "The function is balanced!" << std::endl;
   } else {
-    std::cout << "Something went horribly  wrong!" << std::endl;
+    std::cout << "Something went horribly wrong!" << std::endl;
   }
 }
 
