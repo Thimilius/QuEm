@@ -20,12 +20,12 @@ namespace QuEm {
     }
 
     FloatType random = s_random_distribution(s_random_engine);
-    for (size_t i = 0; i < m_data.size(); i++) {
-      random -= std::norm(m_data[i]);
+    for (size_t state = 0; state < m_data.size(); state++) {
+      random -= std::norm(m_data[state]);
       if (random <= 0) {
-        Collapse(i);
+        Collapse(state);
         result.success = true;
-        result.state = bit == static_cast<size_t>(-1) ? i : GetBit(i, bit);
+        result.state = bit == static_cast<size_t>(-1) ? state : GetBit(state, bit);
         return result;
       }
     }
@@ -61,11 +61,11 @@ namespace QuEm {
     return is_in_tolerance;
   }
   
-  void Qubit::Collapse(size_t entry) {
+  void Qubit::Collapse(size_t state) {
     for (Complex &complex : m_data) {
       complex = 0;
     }
-    m_data[entry] = 1;
+    m_data[state] = 1;
   }
 
 }

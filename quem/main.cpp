@@ -124,11 +124,39 @@ void DeutschAlgorithm(const Matrix &uf) {
   }
 }
 
+void Bell() {
+  // Generate Phi+ bell state. 
+  Qubit q = Qubit({ 1, 0, 0, 0 });
+
+  q = Matrix::Tensor(HADAMARD_GATE, IDENTITY_GATE) * q;
+  q = CNOT_GATE * q;
+
+  MeasureResult result = q.Measure();
+  PrintMeasurement("Bell", result);
+}
+
+void BellEntanglement() {
+  Qubit q = Qubit({ 1, 0, 0, 0 });
+
+  q = Matrix::Tensor(HADAMARD_GATE, IDENTITY_GATE) * q;
+  q = CNOT_GATE * q;
+
+  MeasureResult result = q.Measure(1);
+  if (result.state == 0) {
+    assert(q.Measure(0).state == 0);
+  } else if (result.state == 1) {
+    assert(q.Measure(0).state == 1);
+  } else {
+    assert(false);
+  }
+}
+
 void PrintHelp() {
   std::cout << "Commands:" << std::endl;
   std::cout << "  random (optional: number of qubits)" << std::endl;
   std::cout << "  distribution (optional: number of qubits)" << std::endl;
   std::cout << "  deutsch (function 1-4)" << std::endl;
+  std::cout << "  bell" << std::endl;
 }
 
 int main(int argc, char **argv) {
@@ -168,7 +196,10 @@ int main(int argc, char **argv) {
       }
       
       DeutschAlgorithm(function);
-    } else {
+    } else if (std::strcmp(argv[1], "bell") == 0) {
+      Bell();
+      BellEntanglement();
+    }else {
       PrintHelp();
     }
   } else {

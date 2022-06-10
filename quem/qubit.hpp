@@ -28,7 +28,7 @@ namespace QuEm {
     static Qubit Tensor(const Qubit &a, const Qubit &b);
   private:
     bool IsValid() const;
-    void Collapse(size_t entry);
+    void Collapse(size_t state);
   private:
     std::vector<Complex> m_data;
   private:
