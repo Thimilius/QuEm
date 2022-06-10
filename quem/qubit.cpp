@@ -9,6 +9,10 @@ namespace QuEm {
   Qubit::Qubit(std::vector<Complex> data) : m_data(std::move(data)) { }
 
   MeasureResult Qubit::Measure() {
+    return Measure(-1);
+  }
+
+  MeasureResult Qubit::Measure(size_t bit) {
     MeasureResult result = { };
     
     if (!IsValid()) {
@@ -19,8 +23,9 @@ namespace QuEm {
     for (size_t i = 0; i < m_data.size(); i++) {
       random -= std::norm(m_data[i]);
       if (random <= 0) {
+        Collapse(i);
         result.success = true;
-        result.state = i;
+        result.state = bit == static_cast<size_t>(-1) ? i : GetBit(i, bit);
         return result;
       }
     }
@@ -56,13 +61,11 @@ namespace QuEm {
     return is_in_tolerance;
   }
   
-  int Qubit::Collapse(int entry) {
+  void Qubit::Collapse(size_t entry) {
     for (Complex &complex : m_data) {
       complex = 0;
     }
     m_data[entry] = 1;
-    
-    return entry;
   }
 
 }

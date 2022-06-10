@@ -23,11 +23,12 @@ namespace QuEm {
     size_t GetSize() const { return m_data.size(); }
 
     MeasureResult Measure();
+    MeasureResult Measure(size_t bit);
   public:
     static Qubit Tensor(const Qubit &a, const Qubit &b);
   private:
     bool IsValid() const;
-    int Collapse(int entry);
+    void Collapse(size_t entry);
   private:
     std::vector<Complex> m_data;
   private:
