@@ -70,7 +70,7 @@ namespace QuEm {
       std::vector<Complex> new_data;
       new_data.resize(qubit.GetSize());
       
-      std::vector<Complex> &data = qubit.GetData();
+      std::vector<Complex> &data = qubit.GetAmplitudes();
       for (size_t y = 0; y < size; y++) {
           Complex sum = static_cast<FloatType>(0.0);
           for (size_t e = 0; e < size; e++) {

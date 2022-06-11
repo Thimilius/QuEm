@@ -15,12 +15,12 @@ namespace QuEm {
   class Qubit {
   public:
     Qubit(Complex a, Complex b);
-    Qubit(std::vector<Complex> data);
+    Qubit(std::vector<Complex> amplitudes);
   public:
-    const std::vector<Complex> &GetData() const { return m_data; }
-    std::vector<Complex> &GetData() { return m_data; }
-    void SetData(std::vector<Complex> &&data) { m_data = data; }
-    size_t GetSize() const { return m_data.size(); }
+    const std::vector<Complex> &GetAmplitudes() const { return m_amplitudes; }
+    std::vector<Complex> &GetAmplitudes() { return m_amplitudes; }
+    void SetAmplitudes(std::vector<Complex> &&amplitudes) { m_amplitudes = amplitudes; }
+    size_t GetSize() const { return m_amplitudes.size(); }
 
     MeasureResult Measure();
     MeasureResult Measure(size_t bit);
@@ -30,7 +30,7 @@ namespace QuEm {
     bool IsValid() const;
     void Collapse(size_t state);
   private:
-    std::vector<Complex> m_data;
+    std::vector<Complex> m_amplitudes;
   private:
     inline static std::random_device s_random_device = std::random_device();
     inline static std::mt19937 s_random_engine = std::mt19937(s_random_device());

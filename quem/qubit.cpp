@@ -4,9 +4,9 @@
 
 namespace QuEm {
 
-  Qubit::Qubit(Complex a, Complex b) : m_data({ a, b }) { }
+  Qubit::Qubit(Complex a, Complex b) : m_amplitudes({ a, b }) { }
 
-  Qubit::Qubit(std::vector<Complex> data) : m_data(std::move(data)) { }
+  Qubit::Qubit(std::vector<Complex> amplitudes) : m_amplitudes(std::move(amplitudes)) { }
 
   MeasureResult Qubit::Measure() {
     return Measure(-1);
@@ -20,8 +20,8 @@ namespace QuEm {
     }
 
     FloatType random = s_random_distribution(s_random_engine);
-    for (size_t state = 0; state < m_data.size(); state++) {
-      random -= std::norm(m_data[state]);
+    for (size_t state = 0; state < m_amplitudes.size(); state++) {
+      random -= std::norm(m_amplitudes[state]);
       if (random <= 0) {
         Collapse(state);
         result.success = true;
@@ -41,7 +41,7 @@ namespace QuEm {
     data.resize(a_size * b_size);
     for (size_t i = 0; i < a_size; ++i) {
       for (size_t j = 0; j < b_size; ++j) {
-        data[i * b_size + j] = a.m_data[i] * b.m_data[j];
+        data[i * b_size + j] = a.m_amplitudes[i] * b.m_amplitudes[j];
       }
     }
     
@@ -50,11 +50,11 @@ namespace QuEm {
   }
 
   bool Qubit::IsValid() const {
-    if (!IsPowerOfTwo(m_data.size())) {
+    if (!IsPowerOfTwo(m_amplitudes.size())) {
       return false;
     }
     FloatType sum = 0;
-    for (const Complex &complex : m_data) {
+    for (const Complex &complex : m_amplitudes) {
       sum += std::norm(complex);
     }
     bool is_in_tolerance = std::fabs(sum - 1) < ERROR_TOLERANCE;
@@ -62,10 +62,10 @@ namespace QuEm {
   }
   
   void Qubit::Collapse(size_t state) {
-    for (Complex &complex : m_data) {
+    for (Complex &complex : m_amplitudes) {
       complex = 0;
     }
-    m_data[state] = 1;
+    m_amplitudes[state] = 1;
   }
 
 }
