@@ -9,7 +9,7 @@ namespace QuEm {
 
   struct MeasureResult {
     bool success = false;
-    size_t state = 0;
+    uint64_t state = 0;
   };
   
   class Qubit {
@@ -20,15 +20,15 @@ namespace QuEm {
     const std::vector<Complex> &GetAmplitudes() const { return m_amplitudes; }
     std::vector<Complex> &GetAmplitudes() { return m_amplitudes; }
     void SetAmplitudes(std::vector<Complex> &&amplitudes) { m_amplitudes = amplitudes; }
-    size_t GetSize() const { return m_amplitudes.size(); }
+    uint64_t GetSize() const { return m_amplitudes.size(); }
 
     MeasureResult Measure();
-    MeasureResult Measure(size_t bit);
+    MeasureResult Measure(uint64_t bit);
   public:
     static Qubit Tensor(const Qubit &a, const Qubit &b);
   private:
     bool IsValid() const;
-    void Collapse(size_t state);
+    void Collapse(uint64_t state);
   private:
     std::vector<Complex> m_amplitudes;
   private:

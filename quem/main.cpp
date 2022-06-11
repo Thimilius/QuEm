@@ -7,13 +7,13 @@
 
 using namespace QuEm;
 
-constexpr size_t DISTRIBUTION_SAMPLES = 1000000;
+constexpr uint64_t DISTRIBUTION_SAMPLES = 1000000;
 
 void PrintMeasurement(const std::string &header, const MeasureResult &result) {
   std::cout << header << " Measurement: " << result.state << std::endl;
 }
 
-void PrintDistribution(const std::string &header, const std::map<size_t, size_t> &distributions) {
+void PrintDistribution(const std::string &header, const std::map<uint64_t, uint64_t> &distributions) {
   std::cout << header << " Distribution (" << DISTRIBUTION_SAMPLES << "):" << std::endl;
   for (auto [key, value] : distributions) {
     std::cout << "\t" << key << ": " << value << std::endl;
@@ -29,8 +29,8 @@ void RandomNumberGeneratorOneQubit() {
 }
 
 void RandomNumberGeneratorOneQubitDistribution() {
-  std::map<size_t, size_t> distributions;
-  for (size_t i = 0; i < DISTRIBUTION_SAMPLES; ++i) {
+  std::map<uint64_t, uint64_t> distributions;
+  for (uint64_t i = 0; i < DISTRIBUTION_SAMPLES; ++i) {
     Qubit x = Qubit(1, 0);
     x = HADAMARD_GATE * x;
     MeasureResult result = x.Measure();
@@ -53,8 +53,8 @@ void RandomNumberGeneratorTwoQubit() {
 void RandomNumberGeneratorTwoQubitDistribution() {
   Matrix hadamard_transform = Matrix::Tensor(HADAMARD_GATE, HADAMARD_GATE);
   
-  std::map<size_t, size_t> distributions;
-  for (size_t i = 0; i < DISTRIBUTION_SAMPLES; ++i) {
+  std::map<uint64_t, uint64_t> distributions;
+  for (uint64_t i = 0; i < DISTRIBUTION_SAMPLES; ++i) {
     Qubit x = Qubit({ 1, 0, 0, 0 });
     x = hadamard_transform * x;
     MeasureResult result = x.Measure();
@@ -64,15 +64,15 @@ void RandomNumberGeneratorTwoQubitDistribution() {
   PrintDistribution("Two Qubits", distributions);
 }
 
-void RandomNumberGeneratorNQubit(size_t n) {
-  size_t power_of_two = static_cast<size_t>(1) << n;
+void RandomNumberGeneratorNQubit(uint64_t n) {
+  uint64_t power_of_two = static_cast<uint64_t>(1) << n;
   std::vector<Complex> amplitudes;
   amplitudes.resize(power_of_two, 0);
   amplitudes[0] = 1;
   Qubit x = Qubit(amplitudes);
 
   Matrix hadamard_transform = HADAMARD_GATE;
-  for (size_t i = 1; i < n; i++) {
+  for (uint64_t i = 1; i < n; i++) {
     hadamard_transform = Matrix::Tensor(hadamard_transform, HADAMARD_GATE); 
   }
   
@@ -82,19 +82,19 @@ void RandomNumberGeneratorNQubit(size_t n) {
   PrintMeasurement(std::format("Random number generator ({} qubits)", n), result);
 }
 
-void RandomNumberGeneratorNQubitDistribution(size_t n) {
-  size_t power_of_two = static_cast<size_t>(1) << n;
+void RandomNumberGeneratorNQubitDistribution(uint64_t n) {
+  uint64_t power_of_two = static_cast<uint64_t>(1) << n;
   std::vector<Complex> amplitudes;
   amplitudes.resize(power_of_two, 0);
   amplitudes[0] = 1;
 
   Matrix hadamard_transform = HADAMARD_GATE;
-  for (size_t i = 1; i < n; i++) {
+  for (uint64_t i = 1; i < n; i++) {
     hadamard_transform = Matrix::Tensor(hadamard_transform, HADAMARD_GATE); 
   }
 
-  std::map<size_t, size_t> distributions;
-  for (size_t i = 0; i < DISTRIBUTION_SAMPLES; ++i) {
+  std::map<uint64_t, uint64_t> distributions;
+  for (uint64_t i = 0; i < DISTRIBUTION_SAMPLES; ++i) {
     Qubit x = Qubit(amplitudes);
     x = hadamard_transform * x;
     MeasureResult result = x.Measure();
@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
   if (argc > 1) {
     if (std::strcmp(argv[1], "random") == 0) {
       if (argc > 2) {
-        size_t n = std::strtoull(argv[2], nullptr, 10);
+        uint64_t n = std::strtoull(argv[2], nullptr, 10);
         if (n != 0) {
           RandomNumberGeneratorNQubit(n);
         }
@@ -174,7 +174,7 @@ int main(int argc, char **argv) {
       }
     } else if (std::strcmp(argv[1], "distribution") == 0) {
       if (argc > 2) {
-        size_t n = std::strtoull(argv[2], nullptr, 10);
+        uint64_t n = std::strtoull(argv[2], nullptr, 10);
         if (n != 0) {
           RandomNumberGeneratorNQubitDistribution(n);
         }
@@ -184,7 +184,7 @@ int main(int argc, char **argv) {
         RandomNumberGeneratorNQubitDistribution(4);
       }
     } else if (std::strcmp(argv[1], "deutsch") == 0 && argc > 2) {
-      size_t f = std::strtoull(argv[2], nullptr, 10);
+      uint64_t f = std::strtoull(argv[2], nullptr, 10);
 
       Matrix function = UF_GATE_1;
       switch (f) {

@@ -12,7 +12,7 @@ namespace QuEm {
     return Measure(-1);
   }
 
-  MeasureResult Qubit::Measure(size_t bit) {
+  MeasureResult Qubit::Measure(uint64_t bit) {
     MeasureResult result = { };
     
     if (!IsValid()) {
@@ -20,12 +20,12 @@ namespace QuEm {
     }
 
     FloatType random = s_random_distribution(s_random_engine);
-    for (size_t state = 0; state < m_amplitudes.size(); state++) {
+    for (uint64_t state = 0; state < m_amplitudes.size(); state++) {
       random -= std::norm(m_amplitudes[state]);
       if (random <= 0) {
         Collapse(state);
         result.success = true;
-        result.state = bit == static_cast<size_t>(-1) ? state : GetBit(state, bit);
+        result.state = bit == static_cast<uint64_t>(-1) ? state : GetBit(state, bit);
         return result;
       }
     }
@@ -34,13 +34,13 @@ namespace QuEm {
   }
 
   Qubit Qubit::Tensor(const Qubit &a, const Qubit &b) {
-    size_t a_size = a.GetSize();
-    size_t b_size = b.GetSize();
+    uint64_t a_size = a.GetSize();
+    uint64_t b_size = b.GetSize();
     
     std::vector<Complex> data;
     data.resize(a_size * b_size);
-    for (size_t i = 0; i < a_size; ++i) {
-      for (size_t j = 0; j < b_size; ++j) {
+    for (uint64_t i = 0; i < a_size; ++i) {
+      for (uint64_t j = 0; j < b_size; ++j) {
         data[i * b_size + j] = a.m_amplitudes[i] * b.m_amplitudes[j];
       }
     }
@@ -54,16 +54,16 @@ namespace QuEm {
       return false;
     }
     FloatType sum = 0;
-    for (const Complex &complex : m_amplitudes) {
-      sum += std::norm(complex);
+    for (const Complex &amplitude : m_amplitudes) {
+      sum += std::norm(amplitude);
     }
     bool is_in_tolerance = std::fabs(sum - 1) < ERROR_TOLERANCE;
     return is_in_tolerance;
   }
   
-  void Qubit::Collapse(size_t state) {
-    for (Complex &complex : m_amplitudes) {
-      complex = 0;
+  void Qubit::Collapse(uint64_t state) {
+    for (Complex &amplitude : m_amplitudes) {
+      amplitude = 0;
     }
     m_amplitudes[state] = 1;
   }

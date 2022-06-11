@@ -2,11 +2,11 @@
 
 namespace QuEm {
 
-  inline bool IsPowerOfTwo(size_t x) {
+  inline bool IsPowerOfTwo(uint64_t x) {
     return x != 0 && (x & x - 1) == 0;
   }
 
-  inline size_t GetBit(size_t number, size_t bit) {
+  inline uint64_t GetBit(uint64_t number, uint64_t bit) {
     return 1 & (number >> bit);
   }
   
