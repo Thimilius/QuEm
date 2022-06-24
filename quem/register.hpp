@@ -12,10 +12,10 @@ namespace QuEm {
     uint64_t state = 0;
   };
   
-  class Qubit {
+  class Register {
   public:
-    Qubit(Complex a, Complex b);
-    Qubit(std::vector<Complex> amplitudes);
+    Register(Complex a, Complex b);
+    Register(std::vector<Complex> amplitudes);
   public:
     const std::vector<Complex> &GetAmplitudes() const { return m_amplitudes; }
     std::vector<Complex> &GetAmplitudes() { return m_amplitudes; }
@@ -25,7 +25,7 @@ namespace QuEm {
     MeasureResult Measure();
     MeasureResult Measure(uint64_t bit);
   public:
-    static Qubit Tensor(const Qubit &a, const Qubit &b);
+    static Register Tensor(const Register &a, const Register &b);
   private:
     bool IsValid() const;
     void Collapse(uint64_t state);

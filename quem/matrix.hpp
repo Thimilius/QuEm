@@ -3,7 +3,7 @@
 #include <cassert>
 #include <iostream>
 
-#include "qubit.hpp"
+#include "Register.hpp"
 #include "types.hpp"
 
 namespace QuEm {
@@ -27,15 +27,15 @@ namespace QuEm {
       return m_elements[column + row * m_columns];
     }
     
-    Qubit operator*(Qubit &qubit) const {
-      assert(m_rows == m_columns && m_rows == qubit.GetSize());
+    Register operator*(Register &reg) const {
+      assert(m_rows == m_columns && m_rows == reg.GetSize());
 
       uint64_t size = m_rows;
 
       std::vector<Complex> new_data;
-      new_data.resize(qubit.GetSize());
+      new_data.resize(reg.GetSize());
       
-      std::vector<Complex> &data = qubit.GetAmplitudes();
+      std::vector<Complex> &data = reg.GetAmplitudes();
       for (uint64_t y = 0; y < size; y++) {
           Complex sum = static_cast<FloatType>(0.0);
           for (uint64_t e = 0; e < size; e++) {
@@ -44,7 +44,7 @@ namespace QuEm {
           new_data[y] = sum;
       }
       
-      return Qubit(new_data);
+      return Register(new_data);
     }
 
     void Print() const {

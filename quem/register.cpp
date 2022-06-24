@@ -1,18 +1,18 @@
-﻿#include "qubit.hpp"
+﻿#include "Register.hpp"
 
 #include "utils.hpp"
 
 namespace QuEm {
 
-  Qubit::Qubit(Complex a, Complex b) : m_amplitudes({ a, b }) { }
+  Register::Register(Complex a, Complex b) : m_amplitudes({ a, b }) { }
 
-  Qubit::Qubit(std::vector<Complex> amplitudes) : m_amplitudes(std::move(amplitudes)) { }
+  Register::Register(std::vector<Complex> amplitudes) : m_amplitudes(std::move(amplitudes)) { }
 
-  MeasureResult Qubit::Measure() {
+  MeasureResult Register::Measure() {
     return Measure(-1);
   }
 
-  MeasureResult Qubit::Measure(uint64_t bit) {
+  MeasureResult Register::Measure(uint64_t bit) {
     MeasureResult result = { };
     
     if (!IsValid()) {
@@ -33,7 +33,7 @@ namespace QuEm {
     return result;
   }
 
-  Qubit Qubit::Tensor(const Qubit &a, const Qubit &b) {
+  Register Register::Tensor(const Register &a, const Register &b) {
     uint64_t a_size = a.GetSize();
     uint64_t b_size = b.GetSize();
     
@@ -45,11 +45,11 @@ namespace QuEm {
       }
     }
     
-    Qubit result(data);
+    Register result(data);
     return result;
   }
 
-  bool Qubit::IsValid() const {
+  bool Register::IsValid() const {
     if (!IsPowerOfTwo(m_amplitudes.size())) {
       return false;
     }
@@ -61,7 +61,7 @@ namespace QuEm {
     return is_in_tolerance;
   }
   
-  void Qubit::Collapse(uint64_t state) {
+  void Register::Collapse(uint64_t state) {
     for (Complex &amplitude : m_amplitudes) {
       amplitude = 0;
     }

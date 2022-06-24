@@ -3,7 +3,7 @@
 
 #include "constants.hpp"
 #include "matrix.hpp"
-#include "qubit.hpp" 
+#include "Register.hpp" 
 
 using namespace QuEm;
 
@@ -21,7 +21,7 @@ void PrintDistribution(const std::string &header, const std::map<uint64_t, uint6
 }
 
 void RandomNumberGeneratorOneQubit() {
-  Qubit x = Qubit(1, 0);
+  Register x = Register(1, 0);
   x = HADAMARD_GATE * x;
   MeasureResult result = x.Measure();
   
@@ -31,7 +31,7 @@ void RandomNumberGeneratorOneQubit() {
 void RandomNumberGeneratorOneQubitDistribution() {
   std::map<uint64_t, uint64_t> distributions;
   for (uint64_t i = 0; i < DISTRIBUTION_SAMPLES; ++i) {
-    Qubit x = Qubit(1, 0);
+    Register x = Register(1, 0);
     x = HADAMARD_GATE * x;
     MeasureResult result = x.Measure();
     distributions[result.state]++;
@@ -41,7 +41,7 @@ void RandomNumberGeneratorOneQubitDistribution() {
 }
 
 void RandomNumberGeneratorTwoQubit() {
-  Qubit x = Qubit({ 1, 0, 0, 0 });
+  Register x = Register({ 1, 0, 0, 0 });
 
   Matrix hadamard_transform = Matrix::Tensor(HADAMARD_GATE, HADAMARD_GATE);
   x = hadamard_transform * x;
@@ -55,7 +55,7 @@ void RandomNumberGeneratorTwoQubitDistribution() {
   
   std::map<uint64_t, uint64_t> distributions;
   for (uint64_t i = 0; i < DISTRIBUTION_SAMPLES; ++i) {
-    Qubit x = Qubit({ 1, 0, 0, 0 });
+    Register x = Register({ 1, 0, 0, 0 });
     x = hadamard_transform * x;
     MeasureResult result = x.Measure();
     distributions[result.state]++;
@@ -69,7 +69,7 @@ void RandomNumberGeneratorNQubit(uint64_t n) {
   std::vector<Complex> amplitudes;
   amplitudes.resize(power_of_two, 0);
   amplitudes[0] = 1;
-  Qubit x = Qubit(amplitudes);
+  Register x = Register(amplitudes);
 
   Matrix hadamard_transform = HADAMARD_GATE;
   for (uint64_t i = 1; i < n; i++) {
@@ -95,7 +95,7 @@ void RandomNumberGeneratorNQubitDistribution(uint64_t n) {
 
   std::map<uint64_t, uint64_t> distributions;
   for (uint64_t i = 0; i < DISTRIBUTION_SAMPLES; ++i) {
-    Qubit x = Qubit(amplitudes);
+    Register x = Register(amplitudes);
     x = hadamard_transform * x;
     MeasureResult result = x.Measure();
     distributions[result.state]++;
@@ -105,9 +105,9 @@ void RandomNumberGeneratorNQubitDistribution(uint64_t n) {
 }
 
 void DeutschAlgorithm(const Matrix &uf) {
-  Qubit x = Qubit(1, 0);
-  Qubit y = Qubit(0, 1);
-  Qubit q = Qubit::Tensor(x, y);
+  Register x = Register(1, 0);
+  Register y = Register(0, 1);
+  Register q = Register::Tensor(x, y);
 
   q = HADAMARD_GATE_POW_2 * q;
   q = uf * q;
@@ -126,7 +126,7 @@ void DeutschAlgorithm(const Matrix &uf) {
 
 void Bell() {
   // Generate Phi+ bell state. 
-  Qubit q = Qubit({ 1, 0, 0, 0 });
+  Register q = Register({ 1, 0, 0, 0 });
 
   q = Matrix::Tensor(HADAMARD_GATE, IDENTITY_GATE) * q;
   q = CNOT_GATE * q;
@@ -136,7 +136,7 @@ void Bell() {
 }
 
 void BellEntanglement() {
-  Qubit q = Qubit({ 1, 0, 0, 0 });
+  Register q = Register({ 1, 0, 0, 0 });
 
   q = Matrix::Tensor(HADAMARD_GATE, IDENTITY_GATE) * q;
   q = CNOT_GATE * q;
