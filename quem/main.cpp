@@ -72,7 +72,7 @@ void RandomNumberGeneratorNQubit(uint64_t n) {
   Register x = Register(amplitudes);
 
   Matrix hadamard_transform = HADAMARD_GATE;
-  for (uint64_t i = 1; i < n; i++) {
+  for (uint64_t i = 0; i < n - 1; i++) {
     hadamard_transform = Matrix::Tensor(hadamard_transform, HADAMARD_GATE); 
   }
   
@@ -89,7 +89,7 @@ void RandomNumberGeneratorNQubitDistribution(uint64_t n) {
   amplitudes[0] = 1;
 
   Matrix hadamard_transform = HADAMARD_GATE;
-  for (uint64_t i = 1; i < n; i++) {
+  for (uint64_t i = 0; i < n - 1; i++) {
     hadamard_transform = Matrix::Tensor(hadamard_transform, HADAMARD_GATE); 
   }
 
