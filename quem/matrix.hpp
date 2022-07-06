@@ -3,27 +3,26 @@
 #include <cassert>
 #include <iostream>
 
-#include "Register.hpp"
+#include "register.hpp"
 #include "types.hpp"
 
 namespace QuEm {
 
-  template<typename T>
-  class MatrixT {
+  class Matrix {
   public:
-    MatrixT(uint64_t rows, uint64_t columns) : m_rows(rows), m_columns(columns) {
+    Matrix(uint64_t rows, uint64_t columns) : m_rows(rows), m_columns(columns) {
       m_elements.resize(rows * columns);
     }
     
-    MatrixT(uint64_t rows, uint64_t columns, const std::vector<T> &elements) : m_elements(elements), m_rows(rows), m_columns(columns) {
+    Matrix(uint64_t rows, uint64_t columns, const std::vector<Complex> &elements) : m_rows(rows), m_columns(columns), m_elements(elements) {
       assert(elements.size() == rows * columns);
     }
   public:
-    T &operator()(uint64_t row, uint64_t column) {
+    Complex &operator()(uint64_t row, uint64_t column) {
       return m_elements[column + row * m_columns];
     }
 
-    const T &operator()(uint64_t row, uint64_t column) const {
+    const Complex &operator()(uint64_t row, uint64_t column) const {
       return m_elements[column + row * m_columns];
     }
     
@@ -56,13 +55,13 @@ namespace QuEm {
       }
     }
   public:
-    static MatrixT Tensor(const MatrixT &a, const MatrixT &b) {
+    static Matrix Tensor(const Matrix &a, const Matrix &b) {
       uint64_t rows_b = b.m_rows;
       uint64_t columns_b = b.m_columns;
       uint64_t rows = a.m_rows * rows_b;
       uint64_t columns = a.m_columns * columns_b;
 
-      MatrixT result = MatrixT(rows, columns);
+      Matrix result = Matrix(rows, columns);
       for (uint64_t i = 0; i < rows; i++) {
         for (uint64_t j = 0; j < columns; j++) {
           result(i, j) = a(i / rows_b , j / columns_b) * b(i % rows_b , j % columns_b);
@@ -72,11 +71,9 @@ namespace QuEm {
       return result;
     }
   private:
-    std::vector<T> m_elements;
     uint64_t m_rows;
     uint64_t m_columns;
+    std::vector<Complex> m_elements;
   };
 
-  using Matrix = MatrixT<Complex>;
-  
 }
