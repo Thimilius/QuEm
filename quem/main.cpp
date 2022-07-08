@@ -3,7 +3,7 @@
 
 #include "constants.hpp"
 #include "matrix.hpp"
-#include "Register.hpp" 
+#include "register.hpp" 
 
 using namespace QuEm;
 
