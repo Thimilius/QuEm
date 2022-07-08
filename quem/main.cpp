@@ -109,9 +109,9 @@ void DeutschAlgorithm(const Matrix &uf) {
   Register y = Register(0, 1);
   Register q = Register::Tensor(x, y);
 
-  q = HADAMARD_GATE_POW_2 * q;
+  q = HADAMARD_GATE_4X4 * q;
   q = uf * q;
-  q = HADAMARD_GATE_POW_2 * q;
+  q = HADAMARD_GATE_4X4 * q;
 
   MeasureResult result = q.Measure(1);
 

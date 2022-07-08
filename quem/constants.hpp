@@ -16,7 +16,7 @@ namespace QuEm {
     ONE_OVER_SQRT2, -ONE_OVER_SQRT2,
   });
 
-  const Matrix HADAMARD_GATE_POW_2 = Matrix::Tensor(HADAMARD_GATE, HADAMARD_GATE);
+  const Matrix HADAMARD_GATE_4X4 = Matrix::Tensor(HADAMARD_GATE, HADAMARD_GATE);
 
   const Matrix CNOT_GATE = Matrix(4, 4, {
     1, 0, 0, 0,
