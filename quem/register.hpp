@@ -39,7 +39,7 @@ namespace QuEm {
       static_cast<FloatType>(1.0)
     );
 
-    static constexpr FloatType ERROR_TOLERANCE = static_cast<FloatType>(0.0000000000000001);
+    static constexpr FloatType ERROR_TOLERANCE = static_cast<FloatType>(0.000000000000001);
   };
   
 }
