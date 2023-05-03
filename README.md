@@ -1,8 +1,12 @@
 # QuEm
 
+<div align="center">
+    <img src="preview.png" alt="Preview" width="100%"/>
+</div>
+
 ## Overview
 
-__QuEm__ is a simple quantum computer emulator.
+A simple proof of concept for a quantum computer emulator.
 
 ## Building
 
